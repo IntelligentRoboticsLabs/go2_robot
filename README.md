@@ -1,1 +1,1 @@
-# go2_robot
+# Unitree GO2 Robot
