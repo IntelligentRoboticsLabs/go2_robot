@@ -1,0 +1,31 @@
+name: humble-devel
+
+on:
+  push:
+    branches:
+      - humble-devel
+
+jobs:
+  ROS2:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup ROS 2 environment
+        uses: ros-tooling/setup-ros@0.7.0
+        with:
+          ros-distro: humble
+
+      - name: Build ROS 2 package
+        uses: ros-tooling/action-ros-ci@v0.3
+        with:
+          package-name: go2_robot go2_description go2_interfaces
+          target-ros2-distro: humble
+          colcon-defaults: |
+            {
+              "build": {
+                "mixin": ["coverage-gcc"]
+              }
+            }
+          colcon-mixin-repository: https://raw.githubusercontent.com/colcon/colcon-mixin-repository/1ddb69bedfd1f04c2f000e95452f7c24a4d6176b/index.yaml
