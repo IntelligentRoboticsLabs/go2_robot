@@ -39,9 +39,9 @@
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <sensor_msgs/msg/joy.hpp>
-#include "go2_interfaces/msg/go2_state.hpp"
-#include "go2_interfaces/msg/low_state.hpp"
-#include "go2_interfaces/msg/imu_state.hpp"
+#include "unitree_go/msg/go2_state.hpp"
+#include "unitree_go/msg/low_state.hpp"
+#include "unitree_go/msg/imu_state.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 
 namespace go2_driver
@@ -56,21 +56,21 @@ private:
   void publish_lidar_cyclonedds(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
   void publish_body_poss_cyclonedds(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
   void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg);
-  void publish_joint_state_cyclonedds(const go2_interfaces::msg::LowState::SharedPtr msg);
+  void publish_joint_state_cyclonedds(const unitree_go::msg::LowState::SharedPtr msg);
   void cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr msg);
 
 
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_sub_;
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr robot_pose_sub_;
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
-  rclcpp::Subscription<go2_interfaces::msg::LowState>::SharedPtr low_state_sub_;
+  rclcpp::Subscription<unitree_go::msg::LowState>::SharedPtr low_state_sub_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
 
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub_;
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub_;
-  rclcpp::Publisher<go2_interfaces::msg::Go2State>::SharedPtr go2_state_pub_;
+  rclcpp::Publisher<unitree_go::msg::Go2State>::SharedPtr go2_state_pub_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
-  rclcpp::Publisher<go2_interfaces::msg::IMUState>::SharedPtr imu_pub_;
+  rclcpp::Publisher<unitree_go::msg::IMUState>::SharedPtr imu_pub_;
 
   std::string robot_ip_;
   std::string token_;

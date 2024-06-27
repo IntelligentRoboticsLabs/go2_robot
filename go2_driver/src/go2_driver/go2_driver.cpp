@@ -51,9 +51,9 @@ Go2Driver::Go2Driver(
 
   pointcloud_pub_ = create_publisher<sensor_msgs::msg::PointCloud2>("pointcloud", 10);
   joint_state_pub_ = create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
-  go2_state_pub_ = create_publisher<go2_interfaces::msg::Go2State>("go2_states", 10);
+  go2_state_pub_ = create_publisher<unitree_go::msg::Go2State>("go2_states", 10);
   odom_pub_ = create_publisher<nav_msgs::msg::Odometry>("odom", 10);
-  imu_pub_ = create_publisher<go2_interfaces::msg::IMUState>("imu", 10);
+  imu_pub_ = create_publisher<unitree_go::msg::IMUState>("imu", 10);
 
   pointcloud_sub_ = create_subscription<sensor_msgs::msg::PointCloud2>(
     "/utlidar/cloud", 10,
@@ -66,7 +66,7 @@ Go2Driver::Go2Driver(
   joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
     "joy", 10, std::bind(&Go2Driver::joy_callback, this, std::placeholders::_1));
 
-  low_state_sub_ = create_subscription<go2_interfaces::msg::LowState>(
+  low_state_sub_ = create_subscription<unitree_go::msg::LowState>(
     "lowstate", 10,
     std::bind(&Go2Driver::publish_joint_state_cyclonedds, this, std::placeholders::_1));
 
@@ -102,7 +102,7 @@ void Go2Driver::joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
   joy_state_ = *msg;
 }
 
-void Go2Driver::publish_joint_state_cyclonedds(const go2_interfaces::msg::LowState::SharedPtr msg)
+void Go2Driver::publish_joint_state_cyclonedds(const unitree_go::msg::LowState::SharedPtr msg)
 {
   RCLCPP_INFO(get_logger(), "Received lowstate message");
   sensor_msgs::msg::JointState joint_state;
