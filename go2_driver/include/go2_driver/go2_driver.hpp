@@ -43,6 +43,8 @@
 #include "unitree_go/msg/low_state.hpp"
 #include "unitree_go/msg/imu_state.hpp"
 #include "tf2_ros/transform_broadcaster.h"
+#include "nlohmann/json.hpp"
+#include "unitree_api/msg/request.hpp"
 
 namespace go2_driver
 {
@@ -53,10 +55,10 @@ public:
   Go2Driver(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
 private:
-  void publish_lidar_cyclonedds(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
-  void publish_body_poss_cyclonedds(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
+  void publish_lidar(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
+  void publish_pose_stamped(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
   void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg);
-  void publish_joint_state_cyclonedds(const unitree_go::msg::LowState::SharedPtr msg);
+  void publish_joint_states(const unitree_go::msg::LowState::SharedPtr msg);
   void cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr msg);
 
 
@@ -71,11 +73,7 @@ private:
   rclcpp::Publisher<unitree_go::msg::Go2State>::SharedPtr go2_state_pub_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
   rclcpp::Publisher<unitree_go::msg::IMUState>::SharedPtr imu_pub_;
-
-  std::string robot_ip_;
-  std::string token_;
-  std::string conn_type_;
-  std::unordered_map<std::string, std::string> conn_;
+  rclcpp::Publisher<unitree_api::msg::Request>::SharedPtr request_pub_;
 
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::TimerBase::SharedPtr timer_lidar_;

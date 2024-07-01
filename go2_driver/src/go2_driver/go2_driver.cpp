@@ -38,50 +38,41 @@ Go2Driver::Go2Driver(
 : Node("go2_driver", options),
   tf_broadcaster_(this)
 {
-  // declare_parameter("robot_ip", std::getenv("ROBOT_IP"));
-  // declare_parameter("token", std::getenv("ROBOT_TOKEN"));
-  // declare_parameter("conn_type", std::getenv("CONN_TYPE"));
-
-  // robot_ip_ = get_parameter("robot_ip").as_string();
-  // token_ = get_parameter("token").as_string();
-  // conn_type_ = get_parameter("conn_type").as_string();
-
-  RCLCPP_INFO(get_logger(), "Received ip: %s", robot_ip_.c_str());
-  RCLCPP_INFO(get_logger(), "Connection type if: %s", conn_type_.c_str());
-
   pointcloud_pub_ = create_publisher<sensor_msgs::msg::PointCloud2>("pointcloud", 10);
   joint_state_pub_ = create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
   go2_state_pub_ = create_publisher<unitree_go::msg::Go2State>("go2_states", 10);
   odom_pub_ = create_publisher<nav_msgs::msg::Odometry>("odom", 10);
   imu_pub_ = create_publisher<unitree_go::msg::IMUState>("imu", 10);
+  request_pub_ = create_publisher<unitree_api::msg::Request>("api/sport/request", 10);
+
 
   pointcloud_sub_ = create_subscription<sensor_msgs::msg::PointCloud2>(
     "/utlidar/cloud", 10,
-    std::bind(&Go2Driver::publish_lidar_cyclonedds, this, std::placeholders::_1));
+    std::bind(&Go2Driver::publish_lidar, this, std::placeholders::_1));
 
   robot_pose_sub_ = create_subscription<geometry_msgs::msg::PoseStamped>(
     "/utlidar/robot_pose", 10,
-    std::bind(&Go2Driver::publish_body_poss_cyclonedds, this, std::placeholders::_1));
+    std::bind(&Go2Driver::publish_pose_stamped, this, std::placeholders::_1));
 
   joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
     "joy", 10, std::bind(&Go2Driver::joy_callback, this, std::placeholders::_1));
 
   low_state_sub_ = create_subscription<unitree_go::msg::LowState>(
     "lowstate", 10,
-    std::bind(&Go2Driver::publish_joint_state_cyclonedds, this, std::placeholders::_1));
+    std::bind(&Go2Driver::publish_joint_states, this, std::placeholders::_1));
 
   cmd_vel_sub_ = create_subscription<geometry_msgs::msg::Twist>(
     "cmd_vel", 10, std::bind(&Go2Driver::cmd_vel_callback, this, std::placeholders::_1));
 }
 
-void Go2Driver::publish_lidar_cyclonedds(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
+void Go2Driver::publish_lidar(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
 {
   msg->header.stamp = now();
   msg->header.frame_id = "radar";
   pointcloud_pub_->publish(*msg);
 }
 
-void Go2Driver::publish_body_poss_cyclonedds(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
+void Go2Driver::publish_pose_stamped(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
   geometry_msgs::msg::TransformStamped transform;
   transform.header.stamp = now();
@@ -102,9 +93,8 @@ void Go2Driver::joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
   joy_state_ = *msg;
 }
 
-void Go2Driver::publish_joint_state_cyclonedds(const unitree_go::msg::LowState::SharedPtr msg)
+void Go2Driver::publish_joint_states(const unitree_go::msg::LowState::SharedPtr msg)
 {
-  RCLCPP_INFO(get_logger(), "Received lowstate message");
   sensor_msgs::msg::JointState joint_state;
   joint_state.header.stamp = now();
   joint_state.name = {"FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
@@ -122,8 +112,16 @@ void Go2Driver::publish_joint_state_cyclonedds(const unitree_go::msg::LowState::
 
 void Go2Driver::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr msg)
 {
-  RCLCPP_INFO(get_logger(), "Received cmd_vel message");
-  (void) msg;
+  nlohmann::json js;
+  js["x"] = msg->linear.x;
+  js["y"] = msg->linear.y;
+  js["z"] = msg->angular.z;
+
+  unitree_api::msg::Request req;
+  req.parameter = js.dump();
+  req.header.identity.api_id = 1008;
+
+  request_pub_->publish(req);
 }
 
 }  // namespace go2_driver
