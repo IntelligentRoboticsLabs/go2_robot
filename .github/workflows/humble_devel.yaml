@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Install nlohmann
+        run: sudo apt -y install nlohmann-json3-dev
+
       - name: Setup ROS 2 environment
         uses: ros-tooling/setup-ros@0.7.0
         with:
