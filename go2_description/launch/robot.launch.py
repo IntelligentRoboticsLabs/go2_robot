@@ -101,12 +101,4 @@ def generate_launch_description():
         )
     )
 
-    nodes.append(Node(
-        package='rviz2',
-        namespace='',
-        executable='rviz2',
-        name='rviz2',
-    )
-    )
-
     return LaunchDescription(declared_arguments + nodes)
