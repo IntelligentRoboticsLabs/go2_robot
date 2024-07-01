@@ -6,7 +6,7 @@ Stephen Brawner (brawner@gmail.com)
 <robot
   name="go2_description">
   <link
-    name="base_link">
+    name="base">
     <inertial>
       <origin
         xyz="0.021112 0 -0.005366"
@@ -74,7 +74,7 @@ Stephen Brawner (brawner@gmail.com)
       xyz="0.285 0 0.01"
       rpy="0 0 0" />
     <parent
-      link="base_link" />
+      link="base" />
     <child
       link="Head_upper" />
     <axis
@@ -162,7 +162,7 @@ Stephen Brawner (brawner@gmail.com)
       xyz="0.1934 0.0465 0"
       rpy="0 0 0" />
     <parent
-      link="base_link" />
+      link="base" />
     <child
       link="FL_hip" />
     <axis
@@ -421,7 +421,7 @@ Stephen Brawner (brawner@gmail.com)
       xyz="0.1934 -0.0465 0"
       rpy="0 0 0" />
     <parent
-      link="base_link" />
+      link="base" />
     <child
       link="FR_hip" />
     <axis
@@ -680,7 +680,7 @@ Stephen Brawner (brawner@gmail.com)
       xyz="-0.1934 0.0465 0"
       rpy="0 0 0" />
     <parent
-      link="base_link" />
+      link="base" />
     <child
       link="RL_hip" />
     <axis
@@ -939,7 +939,7 @@ Stephen Brawner (brawner@gmail.com)
       xyz="-0.1934 -0.0465 0"
       rpy="0 0 0" />
     <parent
-      link="base_link" />
+      link="base" />
     <child
       link="RR_hip" />
     <axis
@@ -1178,7 +1178,7 @@ Stephen Brawner (brawner@gmail.com)
       xyz="-0.02557 0 0.04232"
       rpy="0 0 0" />
     <parent
-      link="base_link" />
+      link="base" />
     <child
       link="imu" />
     <axis
@@ -1208,10 +1208,59 @@ Stephen Brawner (brawner@gmail.com)
       xyz="0.28945 0 -0.046825"
       rpy="0 2.8782 0" />
     <parent
-      link="base_link" />
+      link="base" />
     <child
       link="radar" />
     <axis
       xyz="0 0 0" />
+  </joint>
+  <!-- Camera link Realsense Joint -->
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.01" length="0.01" />
+      </geometry>
+      <material name="camera_color">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.05" length="0.09" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="camera_link_joint" type="fixed">
+    <origin xyz="0 -0.05 0" rpy="0 0 0" />
+    <parent link="{robot_num}/front_camera" />
+    <child link="camera_link" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <!-- hesai_lidar  -->
+  <link name="hesai_lidar">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.05" length="0.09" />
+      </geometry>
+      <material name="lidar_color">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.05" length="0.09" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="hesai_lidar_joint" type="fixed">
+    <origin xyz="0.15 0 0.08" rpy="1.56 0 0" />
+    <parent link="{robot_num}/base_link" />
+    <child link="hesai_lidar" />
+    <axis xyz="0 0 0" />
   </joint>
 </robot>
