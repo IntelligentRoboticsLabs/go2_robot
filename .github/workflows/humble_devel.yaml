@@ -20,7 +20,7 @@ jobs:
       - name: Build ROS 2 package
         uses: ros-tooling/action-ros-ci@v0.3
         with:
-          package-name: go2_robot go2_description go2_interfaces
+          package-name: go2_robot go2_description go2_bringup go2_driver go2_hardware go2_simulation unitree_api unitree_go
           target-ros2-distro: humble
           colcon-defaults: |
             {
